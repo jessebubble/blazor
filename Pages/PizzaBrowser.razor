@@ -1,0 +1,47 @@
+@page "/pizza"
+@inject HttpClient HttpClient
+@inject NavigationManager NavigationManager
+@using Blazor
+
+<PageTitle>Pizza Shop</PageTitle>
+
+
+<div class="main">
+    <h1>
+        Welcome to the Pizza Shop
+    </h1>
+    <p>
+        @welcomeMessage
+    </p>
+
+    <ul class ="pizza-cards">
+        @if (specials != null)
+        {
+            @foreach (var special in specials)
+            {
+                <li style="background-image: url('@special.ImageUrl')">
+                    <div class="pizza-info">
+                        <span class="title">
+                            @special.Description
+                        </span>
+                        <span class="price">
+                            @special.BasePrice.ToString("C")
+                        </span>
+                    </div>
+                </li>
+            }
+        }
+    </ul>
+</div>
+
+@code {
+    private string welcomeMessage = "However you like Pizza, we have the right one for you!";
+
+    private List<PizzaSpecial>? specials;
+
+    protected override async Task OnInitializedAsync()
+    {
+        specials = await HttpClient.GetFromJsonAsync<List<PizzaSpecial>>(NavigationManager.BaseUri + "specials") ?? new List<PizzaSpecial>();
+    }
+}
+
